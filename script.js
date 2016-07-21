@@ -145,16 +145,16 @@ $(document).ready(function(){
                     var result = 0;
                     while (this.holdingArea.length > 2) {
                         if (this.holdingArea[1] === "+") {
-                            result = Number((parseFloat(this.holdingArea[0]) + parseFloat(this.holdingArea[2])).toPrecision(8)).toString();
+                            result = Number((parseFloat(this.holdingArea[0]) + parseFloat(this.holdingArea[2])).toPrecision(15)).toString();
                             this.holdingArea.splice(0, 3, result);
                         } else if (this.holdingArea[1] === "—") {
-                            result = Number((parseFloat(this.holdingArea[0]) - parseFloat(this.holdingArea[2])).toPrecision(8)).toString();
+                            result = Number((parseFloat(this.holdingArea[0]) - parseFloat(this.holdingArea[2])).toPrecision(15)).toString();
                             this.holdingArea.splice(0, 3, result);
                         } else if (this.holdingArea[1] === "x") {
-                            result = Number((parseFloat(this.holdingArea[0]) * parseFloat(this.holdingArea[2])).toPrecision(8)).toString();
+                            result = Number((parseFloat(this.holdingArea[0]) * parseFloat(this.holdingArea[2])).toPrecision(15)).toString();
                             this.holdingArea.splice(0, 3, result);
                         } else if (this.holdingArea[1] === "/") {
-                            result = Number((parseFloat(this.holdingArea[0]) / parseFloat(this.holdingArea[2])).toPrecision(8)).toString();
+                            result = Number((parseFloat(this.holdingArea[0]) / parseFloat(this.holdingArea[2])).toPrecision(15)).toString();
                             this.holdingArea.splice(0, 3, result);
                         }
                     }
