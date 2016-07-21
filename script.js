@@ -101,7 +101,7 @@ $(document).ready(function(){
                     this.holdingArea = ["0."];
                     this.flag = 1;
                     this.render();
-                }else if ((patt.test(this.holdingArea[this.holdingArea.length - 1])) && this.holdingArea[0] !== "0."){
+                }else if (patt.test(this.holdingArea[this.holdingArea.length - 1])){
                     this.render();
                 } else if (this.flag === 1){
                     this.holdingArea[this.holdingArea.length - 1] = this.holdingArea[this.holdingArea.length - 1] + String(event.data.symbol);
