@@ -6,11 +6,13 @@ $(document).ready(function(){
 
         var calculator = {
 
-            holdingArea : [],
+            holdingArea : ["0"],
+            flag : 0,
 
             init : function(){
                 this.cacheDOM();
                 this.bindEvents();
+                this.render();
             },
 
             cacheDOM : function(){
@@ -66,13 +68,16 @@ $(document).ready(function(){
 
             addNumber : function(event){
                 var patt = /[\+—\/x]/;
-                if (typeof this.holdingArea[0] == "undefined"){
+                if (this.flag === 0 && this.holdingArea[0] === "0"){
+                    this.holdingArea = [String(event.data.number)];
+                    this.flag = 1;
+                } else if (this.flag === 0){
+                    this.render();
+                } else if (patt.test(this.holdingArea[this.holdingArea.length - 1]) && this.flag === 1){
                     this.holdingArea.push(String(event.data.number));
-                } else if (patt.test(this.holdingArea[this.holdingArea.length - 1])){
+                } else if ((this.holdingArea[this.holdingArea.length - 1].length === 0) && this.flag === 1){
                     this.holdingArea.push(String(event.data.number));
-                } else if (this.holdingArea[this.holdingArea.length - 1].length === 0){
-                    this.holdingArea.push(String(event.data.number));
-                } else if (this.holdingArea[this.holdingArea.length - 1].length > 0){
+                } else if ((this.holdingArea[this.holdingArea.length - 1].length > 0) && this.flag === 1){
                     this.holdingArea[this.holdingArea.length - 1] = this.holdingArea[this.holdingArea.length - 1] + String(event.data.number);
                 }
                 this.render();
@@ -85,16 +90,23 @@ $(document).ready(function(){
                     this.render();
                 } else {
                     this.holdingArea.push(event.data.symbol);
+                    this.flag = 1;
                     this.render();
                 }
             },
 
             addDecimal : function(event){
                 var patt = /[\+—\/x.]/;
-                if (patt.test(this.holdingArea[this.holdingArea.length - 1]) || typeof this.holdingArea[0] == "undefined"){
+                if (this.flag === 0 && this.holdingArea[0] === "0"){
+                    this.holdingArea = ["0."];
+                    this.flag = 1;
+                    this.render();
+                }else if ((patt.test(this.holdingArea[this.holdingArea.length - 1])) && this.holdingArea[0] !== "0."){
+                    this.render();
+                } else if (this.flag === 1){
+                    this.holdingArea[this.holdingArea.length - 1] = this.holdingArea[this.holdingArea.length - 1] + String(event.data.symbol);
                     this.render();
                 } else {
-                    this.holdingArea[this.holdingArea.length - 1] = this.holdingArea[this.holdingArea.length - 1] + String(event.data.symbol);
                     this.render();
                 }
             },
@@ -113,31 +125,41 @@ $(document).ready(function(){
             },
 
             clearAll : function(){
-                this.holdingArea = [];
+                this.holdingArea = ["0"];
+                this.flag = 0;
                 this.render();
             },
 
             backspace : function(){
-                this.holdingArea.pop();
+                if (this.holdingArea.length > 1){
+                    this.holdingArea.pop();
+                } else if (this.holdingArea.length == 1){
+                    this.holdingArea = ["0"];
+                    this.flag = 0;
+                }
                 this.render();
             },
 
             compute : function(){
-                var result = 0;
-                while (this.holdingArea.length > 2){
-                    if (this.holdingArea[1] === "+"){
-                       result = parseFloat(this.holdingArea[0]) + parseFloat(this.holdingArea[2]);
-                        this.holdingArea.splice(0, 3, result);
-                    } else if (this.holdingArea[1] === "—"){
-                        result = parseFloat(this.holdingArea[0]) - parseFloat(this.holdingArea[2]);
-                        this.holdingArea.splice(0, 3, result);
-                    } else if (this.holdingArea[1] === "x") {
-                        result = parseFloat(this.holdingArea[0]) * parseFloat(this.holdingArea[2]);
-                        this.holdingArea.splice(0, 3, result);
-                    } else if (this.holdingArea[1] === "/") {
-                        result = parseFloat(this.holdingArea[0]) / parseFloat(this.holdingArea[2]);
-                        this.holdingArea.splice(0, 3, result);
+                if (this.holdingArea.length > 2) {
+                    var result = 0;
+                    while (this.holdingArea.length > 2) {
+                        if (this.holdingArea[1] === "+") {
+                            result = Number((parseFloat(this.holdingArea[0]) + parseFloat(this.holdingArea[2])).toPrecision(8)).toString();
+                            this.holdingArea.splice(0, 3, result);
+                        } else if (this.holdingArea[1] === "—") {
+                            result = Number((parseFloat(this.holdingArea[0]) - parseFloat(this.holdingArea[2])).toPrecision(8)).toString();
+                            this.holdingArea.splice(0, 3, result);
+                        } else if (this.holdingArea[1] === "x") {
+                            result = Number((parseFloat(this.holdingArea[0]) * parseFloat(this.holdingArea[2])).toPrecision(8)).toString();
+                            this.holdingArea.splice(0, 3, result);
+                        } else if (this.holdingArea[1] === "/") {
+                            result = Number((parseFloat(this.holdingArea[0]) / parseFloat(this.holdingArea[2])).toPrecision(8)).toString();
+                            this.holdingArea.splice(0, 3, result);
+                        }
                     }
+                    this.holdingArea = [result];
+                    this.flag = 0;
                     this.render();
                 }
             }
